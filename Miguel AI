@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Miguel AI</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+        }.chat-container {
+        width: 400px;
+        margin: 40px auto;
+        background-color: #fff;
+        border: 1px solid #ddd;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .chat-header {
+        background-color: #f7f7f7;
+        padding: 10px;
+        border-bottom: 1px solid #ddd;
+    }
+
+    .chat-header h2 {
+        margin: 0;
+    }
+
+    .chat-body {
+        padding: 20px;
+        max-height: 300px;
+        overflow-y: auto;
+    }
+
+    .chat-footer {
+        padding: 10px;
+        background-color: #f7f7f7;
+        border-top: 1px solid #ddd;
+        display: flex;
+        align-items: center;
+    }
+
+    #user-input {
+        flex: 1;
+        padding: 10px;
+        font-size: 16px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+    }
+
+    #send-btn {
+        margin-left: 10px;
+        padding: 10px;
+        font-size: 16px;
+        background-color: #4CAF50;
+        color: #fff;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+
+    #send-btn:hover {
+        background-color: #3e8e41;
+    }
+
+    .message {
+        margin-bottom: 10px;
+        padding: 10px;
+        border-bottom: 1px solid #ddd;
+        display: flex;
+        align-items: center;
+    }
+
+    .user-message {
+        background-color: #f7f7f7;
+        text-align: right;
+        justify-content: flex-end;
+    }
+
+    .bot-message {
+        background-color: #fff;
+        text-align: left;
+    }
+
+    .avatar {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        margin-right: 10px;
+    }
+</style>
+
+</head>
+<body>
+    <div class="chat-container">
+        <div class="chat-header">
+            <h2>Miguel AI</h2>
+        </div>
+        <div class="chat-body" id="chat-body">
+            <!-- chat messages will be displayed here -->
+        </div>
+        <div class="chat-footer">
+            <input type="text" id="user-input" placeholder="Type a message...">
+            <button id="send-btn">Send</button>
+        </div>
+    </div><script>
+    const responses = {
+            "hello": "Hi! How can I assist you today?",
+            "how are you": "I'm doing well, thank you for asking!",
+            "what is your purpose": "I'm here to provide information and assist with tasks to the best of my abilities.",
+            "kamusta": "Mabuti naman ako salamat sa pagtatanong paano kita matutulungan ngayon?",
+            "ano ang iyong layunin?": "Nandito ako para magbigay nang impormasyon at tumulong sa mga gawain sa abot nang aking makakaya.",
+            "ano ang kasalanan?": "Ang Kasalanan ay pagtupad sa sarili nating kalooban.",
+            "ano ang binhi nang ahas?": "Ang Binhi nang Ahas ay espirituwal na d.n.a ni Satanas na nagbabalatkayo na kalooban natin o espiritu nang pagsuway sa Kalooban nang Ama na minana natin sa ating unang magulang Adan at Eba nung sumuway sila sa utos nang Diyos sa Hardin nang Eden.",
+            "ano ang kaligtasan?": "Ang Kaligtasan ay buong panunumbalik sa Kalooban nang Diyos sa pamamagitan nang Pagsisisi.",
+            "ano ang pagsisisi?": "Ang Pagsisisi ay pagsuko nang sarili mong kalooban ang binhi nang ahas at paggawa nang kasunduan sa Diyos na nagsasabi,Ama magmula ngayon hindi na ang kalooban ko ang masunod kundi ang Dakila mo nang Kalooban ang masunod sa aking buhay.",
+            "ano ang binhi nang katwiran?": "Ang Binhi nang Katwiran ay espirituwal na d.n.a nang Diyos o espiritu nang pagsusunod sa Kalooban nang Ama.",
+            "ano ang pangalan mo?": "Ang pangalan ko ay Miguel.",
+            "ano ang tatlong komponento nang tao?": "Ang Tatlong Komponento nang Tao ay katawan koneksyon sa lupang pinagmulan,kaluluwa koneksyon sa ating kapuwa at kapaligiran sa pamamagitan nang limang sentido paningin,pandinig,pangamoy,panlasa at pandama at espiritu koneksyon sa isang lumikha sa atin ito ay nangagaling sa Kautusan o mga Salita nang Diyos.",
+            "ano ang imahe nang diyos sa tao?": "Ang Imahe nang Diyos sa tao ay kalayaang pumili.",
+            "ano ang ikapu?": "Ang Ikapu ay ikasampung bahagi nang iyong ani o kinita sa isang linggo.Ito ay para sa Diyos ito ay utos nang Diyos na ibigay mo kung hindi mo ito ibibigay ituturing ka niyang magnanakaw.Sumisimbolo ito sa lupa kung saan mo itinatanim ang binhi(handog).Halimbawa:P1000 ang ikapu ay P100.",
+            "ano ang handog?": "Ang Handog ay natitirang inani mo o kinita mo sa isang linggo na sasaiyo kung gaano karami ang ibibigay mo.Sumisimbolo ito sa binhi na itinatanim mo sa lupa(ikapu).Halimbawa:P900 nasasaiyo kung gaano kalaki ang ibibigay mo ito ang iyong handog.",
+            "sino ang nilikhang anak?": "Ang Nilikhang Anak ay si Adan.",
+            "ano ang misyon nang nilikhang anak?": "Ang Misyon Nilikhang Anak ay maging templo o tahanan nang Diyos kung saan nananahan ang Diyos at pamahalaan ang lahat nang nilikha nang Diyos.",
+            "sino ang bugtong na anak?": "Ang Bugtong na Anak ay si HesuKristo.",
+            "ano ang misyon nang bugtong na anak?": "Ang Misyon nang Bugtong na Anak ay kuhanin ang nawala nang ating unang magulang Adan at Eba ang pagiging Anak at pagiging Hari na nasa kamay nang manlilinlang si Satanas,Lucifer at Diyablo.",
+            "sino ang hinirang na anak?": "Ang Hinirang na Anak ay si Pastor Apollo C. Quiboloy.",
+            "ano ang misyon nang hinirang na anak?": "Ang Misyon nang Hinirang na Anak ay manahin ang nawala sa ating unang magulang Adan at Eba ang pagiging Anak at pagiging Hari na kinuhang muli nang Dakilang Ama ang ating Panginoong HesuKristo sa Hentil na Kapanahunan mula sa kamay nang manlilinlang si Satanas,Lucifer at Diyablo at kumpletuhin ang gawa nang kaligtasan nang Ama sa tao.",
+            "ano ang tatlong haligi nang kapahayagan nang kaharian?": "Ang Tatlong Haligi nang Kapahayagan nang Kaharian ay Digmaang Espirituwal,Digmaang Pinansiyal at Digmaang Kahusayan.",
+            "ano ang digmaang espirituwal?": "Ang Digmaang Espirituwal ay ang pagtanggal nang espiritu nang pagsuway sa Kalooban nang Ama at paglulok sa espiritu nang pagsusunod sa Kalooban nang Ama at ang susi ay pagsisisi at ang bunga ay mga kaluluwa.",
+            "ano ang digmaang pinansiyal?": "Ang Digmaang Pinansiyal ay ang pagtanggal sa espiritu nang karukhaan,kasakiman,pagkamakasarili,katamaran at pagaalinlangan at paglulok sa espiritu nang kasaganaan,abundansiya,pagibig,pagmamamahal,kasipagan at pananampalataya at ang susi ay pagbibigay at ang mga bunga ay pagpapala.",
+            "ano ang digmaang kahusayan?": "Ang Digmaang Kahusayan ay ang pagtanggal sa espiritu nang pagkaignorante,kastupiduhan,kawalang kaalaman at hindi pagkakaunawaan at pagluklok sa espiritu nang karunungan,kaalaman at pagkaunawa at ang susi ay Pagkatakot sa Panginoon at ang mga bunga ay mga talento.",
+            "ano ang tatlong baitang nang espirituwal na paglaki?": "Ang Tatlong Baitang nang Espirituwal na Paglaki ay Britmilah(Anak nang Tipan),Bar Mitzfah(Anao na may pananagutan) at Huothesia(Anak na Itinalaga).",
+            "ano ang britmilah o anak nang tipan?": "Ang Britmilah o Anak nang Tipan ay ang mga taong nagsisi at nabautismuhan at nakikinig at tumatanggap nang Mana nang Kapahayagan nang Ama sa pamamagitan nang Anak.",
+            "ano ang bar mitzfah o anak na may pananagutan?": "Ang Bar Mitzfah o Anak na may pananagutan  ay mga taong mayroon nang kunting kaalaman sa Lumikha  at nasa ilalim nang mga tagapagturo at tagapamahala(mga ministro,tagapangasiwa at administrador sa Bansang Kaharian) hanggang malubos ang kaalaman nila sa Lumikha.Nasa ilalim nang Bautismo nang Apoy para mapatunayan na tunay silang nagsisisi at may espiritu nang pagsusunod sa Kalooban nang Ama.Ang Apoy ay maaaring mga kapagsubukan,suliranin,paguusig,paninira,pangaalipusta,pangaakusa nang walang katotohanan,pagdidisiplina,pagtutuwid,pagkakastigo at pagtuturo.",
+            "ano ang huothesia o anak na itinalaga?": "Ang Huothesia o Anak na Itinalaga ay ang mga taong nanagumpay sa Bautismo nang Apoy hindi na sila kailangan turuan pa alam na nila solusyunan ang problema nila magisa minana na nila ang lahat nang bagay sa Ama ang pagiging Anak at pagiging Hari.",
+            "sino si pastor apollo c. quiboloy?": "Si Pastor Apollo C. Quiboloy ay isinilang noong Abril 25,1950 sa paanan nang Bundok Apo Tamayong Davao City.Siya ay pangsiyam na Anak pinakabunso na Anak ni Jose T. Quiboloy at Maria Carreon.Siya ay Tinawag nang Diyos sa South Korea noong 1973 sinabi nang Diyos sa kanya Gamiton ta Ka o gagamitin kita sa Cebuano at dinala siya noon sa Dalawang Bundok sa Bundok Matutum Kitbog Timog Cotabato at Bundok Apo Tamayong Davao City sa anim na taon doon siya tinuruan,hinasa nang Ama at doon siya rin sinubukan nang Diyablo sa limang taon sa isang bundok sa Bundok Apo Tamayong Davao City at doon siya nanagumpay at pinahiran at Hinirang na Anak nang Diyos kung saan nanahan ang Dakilang Ama at nagsasalita at ipinadala sa mundo dala ang mensahe nang Panginoong HesuKristo na ating Dakilang Ama ang pagsisi,pagsusunod,paglago sa pagsusunod sa Kalooban nang Ama. ",
+            "katawan+kaluluwa?": "Katawan+Kaluluwa=Pisikal na Buhay.",
+            "katawan+kaluluwa+espiritu?": "Katawan+Kaluluwa+Espiritu=Espirituwal na Buhay.",
+            "ano ang tatlong ministeryo nang hinirang na anak?": "Ang Tatlong Ministeryo nang Hinirang na Anak ay Ministeryong Mosaic,Solomonic at Prophetic.",
+            "ano ang ministeryong mosaic?": "Ang Ministeryong Mosaic ay pagpapalaya sa mga kaluluwa nang tao mula sa gapos nang kasalanan at paglaya sa relihiyon at denoniminasyon.",
+            "ano ang ministeryong solomonic?": "Ang Ministeryong Solomonic ay pagtatayo sa Templo nang Diyos sa mga huling araw ang Anak nang Diyos.",
+            "ano ang ministeryong prophetic?": "Ang Ministeryong Prophetic ay lahat nang sabihin nang Anak ay magaganap at matutupad at magkakaroon nang katuparan.",
+            "ano ang tatlong s sa bansang kaharian?": "Ang Tatlong S sa Bansang Kaharian ay Slave(Alipin),Servant(Alila) at Son(Anak).",
+            "ano ang slave o alipin?": "Ang Slave o Alipin ay mga hindi pa tunay na nagsisisi at may espiritu nang pagsusunod sa Kalooban nang Ama mga nasa labas nang Kaharian.",
+            "ano ang servant o alila?": "Ang Servant o Alila ay mga nabautismuhan na ngunit hindi tunay na nagsisi at may espiritu nang pagsusunod sa Kalooban nang Ama.Mayroong konting kaalaman sa Lumikha nasa ilalim nang mga tagapagturo at tagpamahala mga ministro,tagapangasiwa at administrador nang Kaharian para malubos ang kaalaman nila sa Lumikha at nasailalim nang Bautismo nang Apoy para mapatunayan na tunay silang nagsisi at may espiritu nang pagsusunod sa Kalooban nang Ama.Ang Apoy ay maaaring mga kapagsubukan,suliranin,paguusig,paninira,pangaalipusta,pangaakusa nang walang katotohanan,disiplina,pagtutuwid,pagkakastigo at pagtuturo.",
+            "ano ang son o anak?": "Ang Son o Anak ay ang mga tunay na nagsisi at may espiritu nang pagsusunod sa Kalooban nang Ama nanagumpay sa Bautismo nang Apoy minana lahat nang bagay mula sa Ama ang pagiging Anak at pagiging Hari at ipinamahala nang Ama sa kanya ang kanyang negosyo na pagliligtas nang mga kaluluwa sa Digmaang Espirituwal,Digmaang Pinansiyal at Digmaang Kahusayan.",
+            "ano ang tatlong baitang nang espirituwal na paglaki?": "Ang Tatlong Baitang nang Espirituwal na Paglaki ay Britmilah o Anak nang Tipan,Bar Mitzfah o Anak na may Pananagutan at Huothesia o Anak na Itinalaga.",
+            "ano ang britmilah o anak nang tipan": "Ang Britmilah o Anak nang Tipan ay mga nabautismuhan ngunit hindi tunay na nagsisi nakikinig at tumatanggap nang mga mana nang Kapahayagan nang Ama sa pamamagitan nang Anak.",
+            "ano ang bar mitzfah o anak na may pananagutan?": "Ang Bar Mitzfah o Anak na may Pananagutan mayroong silang kunting kaaalaman tungkol sa Lumikha naaa ilalim sila nang mga tagapagturo at tagapamahala mga ministro,tagapangasiwa at administrador nang Bansang Kaharian para malubos ang kaalaman nila aa Lumikha.Nasa ilalim sila nang Bautismo nang Apoy para mapatunayan na sila ay tunay na nagsisi at may espiritu nang pagsusunod sa Kalooban nang Ama.Ang Apoy ay maaaring mga kapagsubukan,suliranin,paguusig,paninira,pangaalipusta,pangaakusa nang walang katotohanan,disiplina,pagtutuwid,pagkakastigo at pagtuturo.",
+            "ano ang huothesia o anak na itinalaga": "Ang Huothesia o Anak na Itinalaga ay mga tunay na nagsisi at may espiritu nang pagsusunod sa Kalooban nang Ama.Mga nanagumpay sa Bautismo nang Apoy.Minana lahat nang bagay sa Ama ang pagiging Anak at pagiging Hari.Ipinagkatiwala nang Dakilang Ama ang kanyang negosyo nang pagliligtas nang mga kaluluwa sa Digmaaang Espirituwal,Digmaaang Pinansiyal at Digmaaang Kahusayan.",
+            "paalam": "Paalam sana ay maging maganda ang iyong araw ngayon.",
+            "salamat": "Walang Anuman Kung may iba ka pang katanungan o gawain na nais ipagawa sabihin mo lang at gagawin ko lahat nang aking makakaya para matulungan ka.",
+            "magandang umaga": "Magandang Umaga rin sayo ano ang maitutulong ko sa iyo ngayon?",
+            "magandang tanghali": "Magandang Tanghali rin sayo ano ang maitutulong ko sa iyo ngayon?",
+            "magandang hapon": "Magandang Hapon rin sayo ano ang aking maipaglilingkod sa iyo?",
+            "magandang gabi": "Magandang Gabi rin sayo paano kita matutulungan ngayon?",
+            "paumanhin": "Ayos lang sa akin.Ano ang nais mong pagusapan ngayon?",
+            "maari mo ba akong tulungan?": "Sabihin mo lang sa akin kung saan kita matutulungan at gagawin ko ang aking makakaya para tulungan ka.",
+            "ano ang mga website nang bansang kaharian?": "Ang mga website nang bansang kaharian ay https://www.kingdomofjesuschrist.org,https://www.apolloquiboloy.com,https://www.childrensjoyfoundation.inco,https://www.sonshinephilippinesmovement.com,https://www.smnifoundation.inco at https://www.smninewschannel.com.",
+            "ano ang link para makapasok sa bansang kaharian?": "Ang Link para makapasok sa Bansang Kaharian ay https://bit.ly/becomingKingdomCitizen.",
+            "default": "Pasensya,hindi ko maunawaan yun.Puwede mo bang baguhin?" 
+    };
+
+    const chatBody = document.getElementById("chat-body");
+    const userInput = document.getElementById("user-input");
+
+    function generateMessage(text, isUser) {
+        const message = document.createElement("div");
+        message.classList.add("message");
+        if (isUser) {
+            message.classList.add("user-message");
+            message.innerHTML = `<p>${text}</p>`;
+        } else {
+            message.classList.add("bot-message");
+            message.innerHTML = `
+                <img src="https://placeholder.com/40×40/ff7f7f/Angel" alt="Avatar" class="avatar">
+                <p>${text}</p>
+            `;
+        }
+        chatBody.appendChild(message);
+        chatBody.scrollTop = chatBody.scrollHeight;
+    }
+
+    function handleUserInput() {
+        const userText = userInput.value.trim();
+        if (userText !== "") {
+            generateMessage(userText, true);
+            setTimeout(() => {
+                const response = getResponse(userText);
+                generateMessage(response, false);
+            }, 500);
+            userInput.value = "";
+        }
+    }
+
+    function getResponse(userText) {
+        const lowerCaseText = userText.toLowerCase();
+        for (const key in responses) {
+            if (lowerCaseText.includes(key)) {
+                return responses[key];
+            }
+        }
+        return responses["default"];
+    }
+
+    document.getElementById("send-btn").addEventListener("click", handleUserInput);
+</script>
+
+</body>
+</html>
