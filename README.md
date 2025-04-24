@@ -1,1 +1,1 @@
-# Miguel-AI
+# Miguel-AI an AI Chatbot that give spiritual knowledge and answers about Kingdom Nation Doctrines
